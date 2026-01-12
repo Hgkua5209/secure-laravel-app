@@ -160,5 +160,5 @@ Task Management Page
 Audit Logs Page
 ![Dashboard](screenshots/Logs.png)
 
-Profile Pgae
+Profile Page
 ![Dashboard](screenshots/Profile.png)
