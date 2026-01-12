@@ -139,19 +139,26 @@ Stored securely in storage/logs/laravel.log
 📌 Include screenshots such as:
 
 Welcome Page
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](screenshots/Welcome.png)
 
 Login Page
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](screenshots/Login.png)
 
 Register Page
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](screenshots/Register.png)
 
 Dashboard (User & Admin)
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](screenshots/Admin.png)
+
+![Dashboard](screenshots/User.png)
 
 Task Management Page
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](screenshots/Task.png)
+![Dashboard](screenshots/CreateTask.png)
+![Dashboard](screenshots/EditTask.png)
 
 Audit Logs Page
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](screenshots/Logs.png)
+
+Profile Pgae
+![Dashboard](screenshots/Profile.png)
