@@ -15,7 +15,7 @@ class TaskController extends Controller
 
         // Audit log
         AuditLog::create([
-            'user_id' => $user->id,
+            'user_id' => auth()->id(),
             'task_id' => $task->id,
             'action' => 'Accessed Task List'. $task->id,
             'ip_address' => request()->ip(),
@@ -127,7 +127,7 @@ $task->update($data);
 
 
     AuditLog::create([
-        'user_id' => $user->id,
+        'user_id' => auth()->id(),
         'task_id' => $task->id,
         'action' => 'Updated Task ID ' . $task->id,
         'ip_address' => $request->ip(),
@@ -144,14 +144,13 @@ $task->update($data);
             // Prevent IDOR using policy
             $this->authorize('delete', $task);
 
+            $task->delete();
+
             AuditLog::create([
                 'user_id' => auth()->id(),
-                'task_id' => $task->id,
                 'action' => 'Deleted Task ID '.$task->id,
                 'ip_address' => request()->ip(),
             ]);
-
-            $task->delete();
 
             return redirect()
                 ->route('tasks.index')

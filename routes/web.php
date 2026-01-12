@@ -31,14 +31,14 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/admin/dashboard', function () {
         return 'Admin Dashboard';
+        })->name('admin.dashboard');
     });
-});
 
 Route::middleware(['auth', 'role:User'])->group(function () {
     Route::get('/user/dashboard', function () {
         return 'User Dashboard';
+        })->name('user.dashboard');
     });
-});
 
 
 Route::middleware(['auth'])->group(function () {

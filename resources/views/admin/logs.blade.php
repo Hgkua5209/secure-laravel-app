@@ -14,7 +14,6 @@
                         <tr>
                             <th class="border px-4 py-2">User</th>
                             <th class="border px-4 py-2">Action</th>
-                            <th class="border px-4 py-2">Task Title</th>
                             <th class="border px-4 py-2">IP Address</th>
                             <th class="border px-4 py-2">Date</th>
                         </tr>
@@ -29,10 +28,6 @@
 
                                 <td class="border px-4 py-2">
                                     {{ $log->action }}
-                                </td>
-
-                                <td class="border px-4 py-2">
-                                    {{ $log->task->title ?? 'N/A' }}
                                 </td>
 
                                 <td class="border px-4 py-2">
