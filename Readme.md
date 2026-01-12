@@ -1,74 +1,163 @@
-Secure Web Application
+Secure Laravel Task Management System
+Project Description
 
-OWASP-Compliant Development (Laravel)
+This project is a Secure Web Application developed using the Laravel framework.
+It is a Task Management System that allows users to securely create, view, update, and delete tasks while enforcing secure coding practices based on OWASP Top 10 and OWASP ASVS guidelines.
 
-This project is a secure web application built with Laravel, focusing on the OWASP Top 10 and ASVS standards. It features Role-Based Access Control (RBAC), secure CRUD operations, and an automated Audit Logging system.
+The system demonstrates:
 
-1. Prerequisites (What to Download)
+Secure authentication and authorization
 
-Before starting, ensure you have the following installed:
+Role-based access control (Admin & User)
 
-PHP (8.1 or higher): Download PHP (Usually included in XAMPP).
+Input validation and output encoding
 
-XAMPP or Laragon: To run the Apache server and MySQL database.
+Logging and monitoring through audit logs
 
-Composer: Download Composer (PHP Package Manager).
+Protection against common web vulnerabilities such as SQL Injection and XSS
 
-Node.js & NPM: Download Node.js (Required for frontend assets).
+⚙️ Installation Steps
+1️⃣ Prerequisites
 
-Code Editor: Visual Studio Code (Recommended).
+Make sure the following are installed:
 
-2. Application Stack
+PHP 8.1+
 
-Framework: Laravel 10.x
+Composer
 
-Authentication: Laravel Breeze (Session-based)
+MySQL / MariaDB
 
-Database: MySQL / MariaDB
+Node.js & NPM
 
-Frontend: Blade Templates + Tailwind CSS3. 
+Git
 
-Installation Steps
+2️⃣ Clone the Repository
+git clone https://github.com/Hgkua5209/secure-laravel-app.git
+cd secure-laravel-app
 
-Step 1: Clone or Create the Project
-If you are setting this up for the first time:
-
-composer create-project laravel/laravel secure-app
-cd secure-app
-
-Step 2: Install Backend Dependencies
-
+3️⃣ Install Dependencies
 composer install
-
-Step 3: Install Frontend Dependencies
-
 npm install
-
 npm run build
 
-4. Database SetupStart MySQL: 
+4️⃣ Environment Configuration
 
-Open your XAMPP/Laragon control panel and start the MySQL service.
+Copy the example environment file:
 
-Create Database: Open phpMyAdmin (usually http://localhost/phpmyadmin) and create a new database named secure_web_app.
+cp .env.example .env
 
-Configure Environment: Open the .env file in your project root and update the database settings:
 
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=secure_web_app
+Edit .env and configure your database:
+
+DB_DATABASE=secureapp
 DB_USERNAME=root
 DB_PASSWORD=
 
-5. Running the Application
+5️⃣ Generate Application Key
+php artisan key:generate
 
-Start the Laravel Server:
+6️⃣ Database Setup
+
+Create the database manually in MySQL:
+
+CREATE DATABASE secureapp;
+
+
+Run migrations:
+
+php artisan migrate
+
+
+(Optional) Seed roles manually:
+
+INSERT INTO roles (id, name, guard_name, created_at, updated_at)
+VALUES
+(1, 'Admin', 'web', NOW(), NOW()),
+(2, 'User', 'web', NOW(), NOW());
+
+Security Features Summary
+✔ Input Validation
+
+All user input is validated using Laravel’s validation rules.
+
+Prevents malformed and malicious input.
+
+✔ SQL Injection Protection
+
+Uses Laravel Eloquent ORM, which utilizes prepared statements.
+
+✔ Authentication & Session Security
+
+Secure password hashing (Bcrypt)
+
+CSRF protection enabled
+
+Secure session cookies (HttpOnly & Secure flags)
+
+✔ Access Control
+
+Role-Based Access Control (RBAC)
+
+Authorization via Policies and Middleware
+
+✔ Output Encoding (XSS Protection)
+
+Blade templates escape output automatically using {{ }}
+
+✔ Logging & Monitoring
+
+Security-related actions logged in audit_logs
+
+Logs accessible only by Admin users
+
+Stored securely in storage/logs/laravel.log
+
+How to Run the Application
+
+Start the Laravel development server:
 
 php artisan serve
 
-Start the Vite Dev Server (for CSS/JS):
 
-npm run dev
+Open the browser and visit:
 
-Access the App: Open your browser and go to http://127.0.0.1:8000.
+http://127.0.0.1:8000
+
+Dependencies
+Backend
+
+Laravel Framework
+
+Spatie Laravel Permission
+
+Laravel Breeze (Authentication)
+
+Frontend
+
+Blade Templating Engine
+
+Tailwind CSS
+
+Vite
+
+🖼️ Screenshots of the System
+
+📌 Include screenshots such as:
+
+Welcome Page
+![Dashboard](screenshots/dashboard.png)
+
+Login Page
+![Dashboard](screenshots/dashboard.png)
+
+Register Page
+![Dashboard](screenshots/dashboard.png)
+
+Dashboard (User & Admin)
+![Dashboard](screenshots/dashboard.png)
+
+Task Management Page
+![Dashboard](screenshots/dashboard.png)
+
+Audit Logs Page
+![Dashboard](screenshots/dashboard.png)
