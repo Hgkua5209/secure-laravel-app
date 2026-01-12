@@ -4,6 +4,26 @@ OWASP-Compliant Development (Laravel)
 
 This project is a secure web application built with Laravel, focusing on the OWASP Top 10 and ASVS standards. It features Role-Based Access Control (RBAC), secure CRUD operations, and an automated Audit Logging system.
 
+[Dependencies]
+
+Backend
+
+Laravel Framework
+
+Spatie Laravel Permission
+
+Laravel Breeze (Authentication)
+
+Frontend
+
+Blade Templating Engine
+
+Tailwind CSS
+
+Vite
+
+----------------------------------------------------------------------------------------------------------------------------------
+
 1. Prerequisites (What to Download)
 
 Before starting, ensure you have the following installed:
@@ -71,4 +91,67 @@ Start the Vite Dev Server (for CSS/JS):
 
 npm run dev
 
+----------------------------------------------------------------------------------------------------------------------------------
+
 Access the App: Open your browser and go to http://127.0.0.1:8000.
+
+Security Features Summary
+✔ Input Validation
+
+All user input is validated using Laravel’s validation rules.
+
+Prevents malformed and malicious input.
+
+✔ SQL Injection Protection
+
+Uses Laravel Eloquent ORM, which utilizes prepared statements.
+
+✔ Authentication & Session Security
+
+Secure password hashing (Bcrypt)
+
+CSRF protection enabled
+
+Secure session cookies (HttpOnly & Secure flags)
+
+✔ Access Control
+
+Role-Based Access Control (RBAC)
+
+Authorization via Policies and Middleware
+
+✔ Output Encoding (XSS Protection)
+
+Blade templates escape output automatically using {{ }}
+
+✔ Logging & Monitoring
+
+Security-related actions logged in audit_logs
+
+Logs accessible only by Admin users
+
+Stored securely in storage/logs/laravel.log
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+🖼️ Screenshots of the System
+
+📌 Include screenshots such as:
+
+Welcome Page
+![Dashboard](screenshots/dashboard.png)
+
+Login Page
+![Dashboard](screenshots/dashboard.png)
+
+Register Page
+![Dashboard](screenshots/dashboard.png)
+
+Dashboard (User & Admin)
+![Dashboard](screenshots/dashboard.png)
+
+Task Management Page
+![Dashboard](screenshots/dashboard.png)
+
+Audit Logs Page
+![Dashboard](screenshots/dashboard.png)
