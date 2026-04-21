@@ -92,39 +92,38 @@ public function update(Request $request, Task $task)
 {
     $user = auth()->user();
 
-    // Prevent IDOR
     $this->authorize('update', $task);
 
+    $rules = [
+        'title' => [
+            'required',
+            'string',
+            'max:255',
+            'regex:/^[a-zA-Z0-9\s.,!?-]+$/'
+        ],
+        'description' => [
+            'required',
+            'string',
+            'max:1000',
+            'regex:/^[a-zA-Z0-9\s.,!?-]+$/'
+        ],
+        'start_date' => 'nullable|date',
+        'end_date' => 'nullable|date|after_or_equal:start_date',
+    ];
 
-$rules = [
-    'title' => [
-        'required',
-        'string',
-        'max:255',
-        'regex:/^[a-zA-Z0-9\s.,!?-]+$/'
-    ],
-    'description' => [
-        'required',
-        'string',
-        'max:1000',
-        'regex:/^[a-zA-Z0-9\s.,!?-]+$/'
-    ],
-];
+    if ($user->role->name === 'Admin') {
+        $rules['status'] = 'required|in:pending,completed';
+    }
 
-if ($user->role->name === 'Admin') {
-    $rules['status'] = 'required|in:pending,completed';
-}
+    $request->validate($rules);
 
-$request->validate($rules);
+    $data = $request->only('title', 'description', 'start_date', 'end_date');
 
-$data = $request->only('title', 'description');
+    if ($user->role->name === 'Admin') {
+        $data['status'] = $request->status;
+    }
 
-if ($user->role->name === 'Admin') {
-    $data['status'] = $request->status;
-}
-
-$task->update($data);
-
+    $task->update($data);
 
     AuditLog::create([
         'user_id' => auth()->id(),
