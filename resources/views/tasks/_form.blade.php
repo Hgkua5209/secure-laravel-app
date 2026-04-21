@@ -34,6 +34,30 @@
 </div>
 
 @isset($task)
+    {{-- Start Date --}}
+    <div class="mt-4">
+        <label class="block font-medium">Start Date</label>
+        <input
+            type="datetime-local"
+            name="start_date"
+            value="{{ old('start_date', $task->start_date ? \Carbon\Carbon::parse($task->start_date)->format('Y-m-d\TH:i') : '') }}"
+            class="w-full border rounded p-2"
+        >
+    </div>
+
+    {{-- End Date --}}
+    <div class="mt-4">
+        <label class="block font-medium">End Date</label>
+        <input
+            type="datetime-local"
+            name="end_date"
+            value="{{ old('end_date', $task->end_date ? \Carbon\Carbon::parse($task->end_date)->format('Y-m-d\TH:i') : '') }}"
+            class="w-full border rounded p-2"
+        >
+    </div>
+@endisset
+
+@isset($task)
     @if(auth()->user()->role->name === 'Admin')
         <div class="mt-4">
             <label class="block font-medium">Status</label>
