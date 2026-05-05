@@ -30,6 +30,8 @@
                                 <th class="border px-4 py-2 text-left">Title</th>
                                 <th class="border px-4 py-2 text-left">Description</th>
                                 <th class="border px-4 py-2 text-left">Status</th>
+                                <th class="border px-4 py-2 text-left">Start</th>
+                                <th class="border px-4 py-2 text-left">End</th>
                                 <th class="border px-4 py-2 text-center">Actions</th>
                             </tr>
                         </thead>
@@ -55,6 +57,13 @@
 
                                     <td class="border px-4 py-2 capitalize">
                                         {{ $task->status }}
+                                    </td>
+                                    <td class="border px-4 py-2">
+                                        {{ $task->start_date ? \Carbon\Carbon::parse($task->start_date)->format('d M Y, H:i') : '-' }}
+                                    </td>
+
+                                    <td class="border px-4 py-2">
+                                        {{ $task->end_date ? \Carbon\Carbon::parse($task->end_date)->format('d M Y, H:i') : '-' }}
                                     </td>
 
                                     <td class="border px-4 py-2 text-center space-x-2">
