@@ -1,31 +1,47 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight no-print">
             Letterhead Report
         </h2>
     </x-slot>
 
-    {{-- Print isolation: when printing, hide everything except #report-content --}}
+    {{-- Cleaned, robust print rules --}}
     <style>
         @media print {
-            body * {
-                visibility: hidden;
+            /* Hide the main navbar, headers, and dashboard containers completely */
+            nav,
+            header,
+            .no-print,
+            [role="navigation"] {
+                display: none !important;
             }
-            #report-content,
-            #report-content * {
-                visibility: visible;
+
+            /* Reset body backgrounds and structures for paper printing */
+            body,
+            html {
+                background: #ffffff !important;
+                color: #000000 !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
+
+            /* Expand the target report card block to fill the entire page canvas width */
             #report-content {
+                display: block !important;
                 position: absolute;
                 top: 0;
                 left: 0;
-                width: 100%;
-                margin: 0;
-                padding: 0;
+                width: 100% !important;
+                max-width: 100% !important;
                 box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                border: none !important;
             }
-            .no-print {
-                display: none !important;
+
+            /* Prevent layout cards or table rows from breaking awkwardly halfway across pages */
+            tr, p, div {
+                page-break-inside: avoid;
             }
         }
     </style>
@@ -84,13 +100,13 @@
         @if($generated)
             <div class="no-print flex justify-end">
                 <button type="button" onclick="window.print()"
-                        class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded text-sm font-medium">
+                        class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded text-sm font-medium shadow">
                     🖨️ Print / Save as PDF
                 </button>
             </div>
 
             {{-- ===================== PRINTABLE REPORT ===================== --}}
-            <div id="report-content" class="bg-white shadow rounded-lg p-10">
+            <div id="report-content" class="bg-white shadow rounded-lg p-10 print:p-0">
 
                 {{-- Letterhead --}}
                 <div class="text-center border-b-2 border-gray-800 pb-4 mb-6">
@@ -124,7 +140,7 @@
                 {{-- Task Summary --}}
                 <h3 class="text-md font-semibold text-gray-800 mb-2">Task Summary</h3>
 
-                <div class="flex flex-wrap gap-3 mb-4 text-sm">
+                <div class="flex flex-wrap gap-3 mb-4 text-sm no-print">
                     <span class="px-3 py-1 rounded bg-gray-100 border border-gray-300">Total: {{ $taskStats['total'] }}</span>
                     <span class="px-3 py-1 rounded bg-yellow-50 border border-yellow-300">Pending: {{ $taskStats['pending'] }}</span>
                     <span class="px-3 py-1 rounded bg-blue-50 border border-blue-300">In Progress: {{ $taskStats['in_progress'] }}</span>
