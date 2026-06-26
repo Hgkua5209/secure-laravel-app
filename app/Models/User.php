@@ -8,13 +8,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Role;
+use App\Models\Task;
+use App\Models\AuditLog;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-
-    use HasRoles;
+    use HasRoles; // Kept for database table migrations structural compatibility
 
     /**
      * The attributes that are mass assignable.
@@ -25,6 +26,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id', // CRITICAL: Added to allow Laravel to fetch and process your custom role relations
     ];
 
     /**
@@ -47,18 +49,28 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    /**
+     * Get the custom role associated with the user.
+     */
     public function role()
-        {
-            return $this->belongsTo(Role::class);
-        }
+    {
+        // Explicitly defining the foreign key mapping from your schema
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    /**
+     * Get the tasks for the user.
+     */
     public function tasks()
-        {
-            return $this->hasMany(Task::class);
-        }
+    {
+        return $this->hasMany(Task::class, 'user_id');
+    }
 
+    /**
+     * Get the audit logs for the user.
+     */
     public function auditLogs()
-        {
-            return $this->hasMany(AuditLog::class);
-        }
-
+    {
+        return $this->hasMany(AuditLog::class, 'user_id');
+    }
 }

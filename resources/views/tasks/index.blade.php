@@ -22,8 +22,8 @@
                     <table class="w-full border border-gray-300 text-sm">
                         <thead class="bg-gray-100">
                             <tr>
-                                {{-- ADMIN ONLY --}}
-                                @if(auth()->user()->role->name === 'Admin')
+                                {{-- Standardized Role Check --}}
+                                @if(auth()->user()->hasRole('Admin'))
                                     <th class="border px-4 py-2 text-left">User</th>
                                 @endif
 
@@ -39,9 +39,7 @@
                         <tbody>
                             @forelse ($tasks as $task)
                                 <tr class="hover:bg-gray-50">
-
-                                    {{-- ADMIN ONLY --}}
-                                    @if(auth()->user()->role->name === 'Admin')
+                                    @if(auth()->user()->hasRole('Admin'))
                                         <td class="border px-4 py-2">
                                             {{ $task->user->name ?? 'Unknown' }}
                                         </td>
@@ -50,45 +48,31 @@
                                     <td class="border px-4 py-2">
                                         {{ $task->title }}
                                     </td>
-
                                     <td class="border px-4 py-2">
                                         {{ $task->description }}
                                     </td>
-
                                     <td class="border px-4 py-2 capitalize">
                                         {{ $task->status }}
                                     </td>
                                     <td class="border px-4 py-2">
                                         {{ $task->start_date ? \Carbon\Carbon::parse($task->start_date)->format('d M Y, H:i') : '-' }}
                                     </td>
-
                                     <td class="border px-4 py-2">
                                         {{ $task->end_date ? \Carbon\Carbon::parse($task->end_date)->format('d M Y, H:i') : '-' }}
                                     </td>
-
                                     <td class="border px-4 py-2 text-center space-x-2">
-                                        <a href="{{ route('tasks.edit', $task) }}"
-                                           class="text-blue-600 hover:underline">
-                                            Edit
-                                        </a>
-
-                                        <form action="{{ route('tasks.destroy', $task) }}"
-                                              method="POST"
-                                              class="inline"
-                                              onsubmit="return confirm('Are you sure you want to delete this task?');">
+                                        <a href="{{ route('tasks.edit', $task) }}" class="text-blue-600 hover:underline">Edit</a>
+                                        <form action="{{ route('tasks.destroy', $task) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit"
-                                                    class="text-red-600 hover:underline">
-                                                Delete
-                                            </button>
+                                            <button type="submit" class="text-red-600 hover:underline">Delete</button>
                                         </form>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5"
-                                        class="border px-4 py-4 text-center text-gray-500">
+                                    {{-- Dynamically calculates alignment spaces based on Admin vs User elements --}}
+                                    <td colspan="{{ auth()->user()->hasRole('Admin') ? 7 : 6 }}" class="border px-4 py-4 text-center text-gray-500">
                                         No tasks found.
                                     </td>
                                 </tr>
