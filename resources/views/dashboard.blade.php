@@ -66,6 +66,16 @@
                             </p>
                     </a>
 
+                @if(auth()->user()->role->name === 'Admin')
+                    <a href="{{ route('admin.reports.letterhead') }}"
+                        class="block p-6 bg-red-50 rounded-lg shadow hover:shadow-md transition">
+                            <h3 class="text-lg font-semibold text-gray-800">Letterhead Report</h3>
+                            <p class="mt-2 text-sm text-gray-600">
+                                Generate a printable report by user and date
+                            </p>
+                    </a>
+                @endif
+
             </div>
 
         </div>

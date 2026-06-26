@@ -1,0 +1,225 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Letterhead Report
+        </h2>
+    </x-slot>
+
+    {{-- Print isolation: when printing, hide everything except #report-content --}}
+    <style>
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #report-content,
+            #report-content * {
+                visibility: visible;
+            }
+            #report-content {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                box-shadow: none !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+
+    <div class="py-6 max-w-5xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
+        {{-- Filter Form --}}
+        <div class="no-print bg-white p-6 rounded-lg shadow">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Generate Report</h3>
+
+            <form method="GET" action="{{ route('admin.reports.letterhead') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <input type="hidden" name="generate" value="1">
+
+                <div class="md:col-span-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">User</label>
+                    <select name="user_id" class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+                        <option value="">All Users</option>
+                        @foreach($users as $u)
+                            <option value="{{ $u->id }}" @selected(request('user_id') == $u->id)>
+                                {{ $u->name }} ({{ $u->email }})
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="md:col-span-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">From</label>
+                    <input type="date" name="date_from" value="{{ request('date_from') }}"
+                           class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+                </div>
+
+                <div class="md:col-span-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">To</label>
+                    <input type="date" name="date_to" value="{{ request('date_to') }}"
+                           class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+                </div>
+
+                <div class="md:col-span-1">
+                    <button type="submit"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium">
+                        Generate Report
+                    </button>
+                </div>
+            </form>
+
+            @error('date_to')
+                <p class="text-red-600 text-sm mt-2">{{ $message }}</p>
+            @enderror
+
+            <p class="text-xs text-gray-500 mt-3">
+                Leave "User" as "All Users" to include every user. Leave the dates blank to include full history.
+                Filtering is based on when each task or activity was recorded.
+            </p>
+        </div>
+
+        @if($generated)
+            <div class="no-print flex justify-end">
+                <button type="button" onclick="window.print()"
+                        class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2 rounded text-sm font-medium">
+                    🖨️ Print / Save as PDF
+                </button>
+            </div>
+
+            {{-- ===================== PRINTABLE REPORT ===================== --}}
+            <div id="report-content" class="bg-white shadow rounded-lg p-10">
+
+                {{-- Letterhead --}}
+                <div class="text-center border-b-2 border-gray-800 pb-4 mb-6">
+                    <h1 class="text-2xl font-bold text-gray-900 tracking-wide">VeriTrail Systems</h1>
+                    <p class="text-sm text-gray-600">UniKL MIIT, 1016, Jalan Sultan Ismail, 50250</p>
+                    <p class="text-sm text-gray-600">Phone: +603-2175 4000 &nbsp;|&nbsp; Email: enquiries.miit@unikl.edu.my</p>
+                </div>
+
+                <h2 class="text-xl font-semibold text-center text-gray-800 mb-6">
+                    User Activity &amp; Task Report
+                </h2>
+
+                {{-- Meta info --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-700 mb-8 border border-gray-200 rounded p-4">
+                    <p><span class="font-semibold">Prepared for:</span>
+                        {{ $selectedUser ? $selectedUser->name . ' (' . $selectedUser->email . ')' : 'All Users' }}
+                    </p>
+                    <p><span class="font-semibold">Generated by:</span> {{ auth()->user()->name }}</p>
+                    <p><span class="font-semibold">Period:</span>
+                        @if($dateFrom || $dateTo)
+                            {{ $dateFrom ? \Carbon\Carbon::parse($dateFrom)->format('d M Y') : 'Beginning' }}
+                            &ndash;
+                            {{ $dateTo ? \Carbon\Carbon::parse($dateTo)->format('d M Y') : 'Present' }}
+                        @else
+                            Full history
+                        @endif
+                    </p>
+                    <p><span class="font-semibold">Generated on:</span> {{ now()->format('d M Y, h:i A') }}</p>
+                </div>
+
+                {{-- Task Summary --}}
+                <h3 class="text-md font-semibold text-gray-800 mb-2">Task Summary</h3>
+
+                <div class="flex flex-wrap gap-3 mb-4 text-sm">
+                    <span class="px-3 py-1 rounded bg-gray-100 border border-gray-300">Total: {{ $taskStats['total'] }}</span>
+                    <span class="px-3 py-1 rounded bg-yellow-50 border border-yellow-300">Pending: {{ $taskStats['pending'] }}</span>
+                    <span class="px-3 py-1 rounded bg-blue-50 border border-blue-300">In Progress: {{ $taskStats['in_progress'] }}</span>
+                    <span class="px-3 py-1 rounded bg-green-50 border border-green-300">Completed: {{ $taskStats['completed'] }}</span>
+                </div>
+
+                <table class="w-full border border-gray-300 text-sm mb-8">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="border px-3 py-2 text-left">#</th>
+                            @if(!$selectedUser)
+                                <th class="border px-3 py-2 text-left">User</th>
+                            @endif
+                            <th class="border px-3 py-2 text-left">Title</th>
+                            <th class="border px-3 py-2 text-left">Status</th>
+                            <th class="border px-3 py-2 text-left">Start</th>
+                            <th class="border px-3 py-2 text-left">End</th>
+                            <th class="border px-3 py-2 text-left">Created</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($tasks as $task)
+                            <tr>
+                                <td class="border px-3 py-2">{{ $loop->iteration }}</td>
+                                @if(!$selectedUser)
+                                    <td class="border px-3 py-2">{{ $task->user->name ?? 'Unknown' }}</td>
+                                @endif
+                                <td class="border px-3 py-2">{{ $task->title }}</td>
+                                <td class="border px-3 py-2 capitalize">{{ str_replace('_', ' ', $task->status) }}</td>
+                                <td class="border px-3 py-2">{{ $task->start_date ? \Carbon\Carbon::parse($task->start_date)->format('d M Y') : '-' }}</td>
+                                <td class="border px-3 py-2">{{ $task->end_date ? \Carbon\Carbon::parse($task->end_date)->format('d M Y') : '-' }}</td>
+                                <td class="border px-3 py-2">{{ $task->created_at->format('d M Y') }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="{{ $selectedUser ? 6 : 7 }}" class="border px-3 py-4 text-center text-gray-500">
+                                    No tasks found for the selected criteria.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+
+                {{-- Audit / Activity Log --}}
+                <h3 class="text-md font-semibold text-gray-800 mb-2">Audit &amp; Activity Log</h3>
+
+                <table class="w-full border border-gray-300 text-sm mb-10">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="border px-3 py-2 text-left">#</th>
+                            <th class="border px-3 py-2 text-left">Date &amp; Time</th>
+                            @if(!$selectedUser)
+                                <th class="border px-3 py-2 text-left">User</th>
+                            @endif
+                            <th class="border px-3 py-2 text-left">Action</th>
+                            <th class="border px-3 py-2 text-left">Related Task</th>
+                            <th class="border px-3 py-2 text-left">IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($logs as $log)
+                            <tr>
+                                <td class="border px-3 py-2">{{ $loop->iteration }}</td>
+                                <td class="border px-3 py-2">{{ $log->created_at->format('d M Y, h:i A') }}</td>
+                                @if(!$selectedUser)
+                                    <td class="border px-3 py-2">{{ $log->user->name ?? 'System' }}</td>
+                                @endif
+                                <td class="border px-3 py-2">{{ $log->action }}</td>
+                                <td class="border px-3 py-2">{{ $log->task->title ?? '-' }}</td>
+                                <td class="border px-3 py-2">{{ $log->ip_address }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="{{ $selectedUser ? 5 : 6 }}" class="border px-3 py-4 text-center text-gray-500">
+                                    No activity found for the selected criteria.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+
+                {{-- Signature block --}}
+                <div class="grid grid-cols-2 gap-12 mt-12 text-sm">
+                    <div>
+                        <p class="border-t border-gray-500 pt-2">Prepared by: {{ auth()->user()->name }}</p>
+                    </div>
+                    <div>
+                        <p class="border-t border-gray-500 pt-2">Verified by: ______________________</p>
+                    </div>
+                </div>
+
+                <p class="text-center text-xs text-gray-400 mt-10">
+                    This is a computer-generated report from the Task &amp; Audit Management System.
+                </p>
+            </div>
+        @endif
+    </div>
+</x-app-layout>

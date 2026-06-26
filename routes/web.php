@@ -47,10 +47,14 @@ Route::middleware(['auth'])->group(function () {
 
 
 use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\Admin\ReportController;
 
 Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/admin/logs', [AuditLogController::class, 'index'])
         ->name('admin.logs');
+
+    Route::get('/admin/reports/letterhead', [ReportController::class, 'index'])
+        ->name('admin.reports.letterhead');
 });
 
 
